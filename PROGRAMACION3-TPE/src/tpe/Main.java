@@ -1,14 +1,11 @@
 package tpe;
 
-
-
 import tpe.Servicios;
 import tpe.utils.CSVReader;
 import tpe.utils.Procesador;
 import tpe.utils.Tarea;
 import java.util.ArrayList;
 import java.util.List;
-
 public class Main {
 	public static void main(String args[]) {
 		

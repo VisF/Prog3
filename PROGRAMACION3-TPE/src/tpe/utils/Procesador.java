@@ -19,18 +19,16 @@ public class Procesador {
 		tareasCriticas = 0;
 	}
 	public boolean asignarTarea(Tarea tarea){
-		if(tarea.isCritica() && tareasCriticas>2){
-
-			return false;
-		}
-
 		tareas.add(tarea);
 		tarea.asignar();
 		if(tarea.isCritica()){
 			tareasCriticas++;
 		}
 		return true;
+	}
 
+	public int tareasCriticas () {
+		return tareasCriticas;
 	}
 	public void removerTarea(Tarea tarea){
 		tareas.remove(tarea);

@@ -13,6 +13,14 @@ import java.util.HashMap;
  * NO modificar la interfaz de esta clase ni sus métodos públicos.
  * Sólo se podrá adaptar el nombre de la clase "Tarea" según sus decisiones
  * de implementación.
+ *
+ *
+ * FALTA:
+ * 1- Backtracking y Greedy " clase aparte.
+ * 2- El método asignarTarea de las Tareas no debería ser responsable de saber si puede asignar o no la tarea
+ * por superar la cantidad crítica. Esto debe serconsiderado dentro de los algoritmos, sino es una restricción
+ * que no se cumple
+ * 3- No ordenar procesadores (linea 170)
  */
 public class Servicios {
 	private HashMap<String, Procesador> procesadores;
@@ -31,7 +39,8 @@ public class Servicios {
 	/*
      * Expresar la complejidad temporal del constructor.
      *
-     * La complejidad es de O(n + m*2) donde n son los procesadores y m son las tareas, *2 porque son señaladas de dos maneras distintas, por hashmap y por arraylist
+     * La complejidad es de O(n + m*2) donde n son los procesadores y m son las tareas, *2 porque son señaladas
+     * de dos maneras distintas, por hashmap y por arraylist
      * El resto de los componentes es de 0(1) asique es despreciable
      */
 	public Servicios(String pathProcesadores, String pathTareas)
@@ -58,19 +67,14 @@ public class Servicios {
 			if(!tarea.isCritica()) {
 				notCritica.add(tarea);
 			}
-		}
-		for(Tarea tarea: tareas.values()) {
-			if(tarea.isCritica()) {
+			else {
 				sonCritica.add(tarea);
 			}
 		}
-
 		this.estadosGenerados = 0;
 		this.mejorSolucion = null;
 		this.candidatosConsiderados = 0;
 		this.solucionBack = false;
-
-		
 	}
 	
 	/*
@@ -124,7 +128,9 @@ public class Servicios {
 			}
 		}
 		return tareasPorPrioridad;
-	} /*
+	}
+
+	/*
 	Entre la funcion backtracking (publica) y la funcion backtrack(privada) tienen una complejidad
 	de O(n!) entre la recursion del backtracking y el ciclo for
 	*/
@@ -146,23 +152,19 @@ public class Servicios {
 	}
 
 	private boolean backtrack(int tiempoMax, ArrayList<Tarea> tareasExtra, ArrayList<Procesador> procPendientes, Solucion solucionActual) {
-
 		if (tareasExtra.isEmpty()) {
 			solucionActual = actualizarMejorSolucion();
 			if (mejorSolucion == null || esMejorSolucion(solucionActual)) {
 				mejorSolucion = solucionActual;
-
 			}
 			return true;
-
 		}
 		Tarea tarea = null;
 		ArrayList<Tarea> tareasRestantes = null;
 		tarea = tareasExtra.get(0);
 		tareasRestantes = new ArrayList<>(tareasExtra.subList(1, tareasExtra.size())); //Reestructuracion del arraylist para que quede el siguiente elemento en la posicion 0
 
-		procPendientes.sort(comparadorProcesadores);
-
+		//procPendientes.sort(comparadorProcesadores);//ACA CAMBIAR, NO ORDENAR SINO ELEGIR
 		boolean seEncontroSolucion = false;
 		for (int i = 0; i < procPendientes.size(); i++) {
 			Procesador procesador = procPendientes.get(i);
@@ -186,16 +188,16 @@ public class Servicios {
 		return actual.getTiempoMaximo()<mejorSolucion.getTiempoMaximo();
 	}
 
-
+	// ESTE METODO CONTROLA LA POSIBILIDAD DE ASIGNAR UNA TAREA SI NO ESTA RESTRINGIDA
 	private boolean puedeAsignarTarea(Procesador procesador, Tarea tarea, int tiempoMax){ //Complejidad O(1) solo hay que hacer una cuenta
 		if(tarea == null){
 			return false;
 		}
 		int tiempoTotal = procesador.tiempoTotal() + tarea.getTiempo();
-		if(tiempoTotal> tiempoMax && !procesador.isRefrigerado()){
+		if (tarea.isCritica() && (procesador.tareasCriticas()>=2) || (tiempoTotal > tiempoMax && !procesador.isRefrigerado())) {
 			return false;
 		}
-		else{
+		else {
 			return true;
 		}
 	}
