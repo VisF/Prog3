@@ -162,6 +162,9 @@ public class Seleccion {
      * Selecciona siempre la mejor opción disponible en el momento, sin considerar todas las combinaciones posibles.
      * Estrategia: Se ordenan todas las tareas de menor a mayor. Se toma y remueve la primera y se asigna al mejor
      * procesador disponible, si no se imprime un mensaje.
+     * Se trata de optimizar el algoritmo haciendo que al cargar la primer tanda de tareas en procesadores,
+     * las siguientes tareas se cargan en orden reverso, para que no quede siempre la tarea de mayor tiempo en
+     * el mismo procesador
      * Una vez asignadas todas las tareas, se actualiza la mejor solucion encontrada
      */
     public Solucion greedy(int tiempoMax){
@@ -172,25 +175,40 @@ public class Seleccion {
             return null;
         }
         estadosGenerados = 0;
+        int tareasAsignadas = 0;
+        boolean descendente = true;
         while(!(tareasTotales.isEmpty())){
             estadosGenerados++;
             Tarea tarea = tareasTotales.remove(0);
             Procesador mejorProc = obtenerMejorProcesador(tiempoMax, tarea);
             if (mejorProc != null){
                 mejorProc.asignarTarea(tarea);
+                tareasAsignadas++;
             }
             else{
                 System.out.println("No se pudo asignar la tarea:" + tarea);
             }
+            if(tareasAsignadas>= procesadoresPendientes.size()){
+                if(descendente){
+                    tareasTotales.sort(comparador.reversed());
+                }
+                else{
+                    tareasTotales.sort(comparador);
+                }
+                tareasAsignadas = 0;
+                descendente = !descendente;
+
+            }
+
         }
         actualizarMejorSolucion();
         return mejorSolucion;
     }
 
     /*
-    * Método para obtener el mejor procesador disponible para una tarea específica.
-    * Considera el tiempo total de ejecución y si el procesador está refrigerado.
-    */
+     * Método para obtener el mejor procesador disponible para una tarea específica.
+     * Considera el tiempo total de ejecución y si el procesador está refrigerado.
+     */
     private Procesador obtenerMejorProcesador(int tiempoMax, Tarea tarea){
         Procesador mejorProc = null;
         int menorTiempoTotal = Integer.MAX_VALUE;
@@ -207,5 +225,4 @@ public class Seleccion {
         }
         return mejorProc;
     }
-
 }

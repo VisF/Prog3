@@ -7,6 +7,8 @@ import java.util.List;
 public class Main {
 	public static void main(String[] args) {
 
+        /* TRABAJO REALIZADO POR LOS ESTUDIANTES FACUNDO VIS Y LUIS MATIAS SHEDDEN */
+
 		Servicio servicio = new Servicio("./src/tpe/datasets/Procesadores.csv", "./src/tpe/datasets/Tareas.csv");
 		int tiempoMaximo = 110;
 
@@ -38,7 +40,6 @@ public class Main {
 			System.out.println("\n");
 		}
 
-
 		//Prueba seleccion por Backtracing y Greedy
 		Seleccion seleccion1 = new Seleccion(servicio.getProcesadores(), servicio.getTareas());
 		Seleccion seleccion2 = new Seleccion(servicio.getProcesadores(), servicio.getTareas());
@@ -48,7 +49,6 @@ public class Main {
 		System.out.println("\n");
 		Solucion solg = new Solucion(seleccion2.greedy(tiempoMaximo));
 		solg.mostrarResultado();
-
 	}
 //FIN MAIN
 }
